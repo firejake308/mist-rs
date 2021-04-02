@@ -1,7 +1,6 @@
 extern crate conrod;
 extern crate find_folder;
 use conrod::backend::glium::glium::{self, Surface};
-use conrod::backend::winit::convert_event;
 use conrod::{widget, Positionable, Colorable, Widget, widget_ids};
 
 const WIDTH: u32 = 400;
