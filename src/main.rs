@@ -22,7 +22,7 @@ fn main() {
     let image_map = conrod::image::Map::<glium::texture::Texture2d>::new();
     let mut renderer = conrod::backend::glium::Renderer::new(&display).unwrap();
 
-    widget_ids!(struct Ids { text });
+    widget_ids!(struct Ids { text, text_box });
     let ids = Ids::new(ui.widget_id_generator());
 
     let assets = find_folder::Search::KidsThenParents(3, 5)
@@ -30,6 +30,8 @@ fn main() {
         .unwrap();
     let font_path = assets.join("NotoSans-Regular.ttf");
     ui.fonts.insert_from_file(font_path).unwrap();
+
+    let mut editable_text: String = "wassup".to_owned();
 
     let mut event_loop = EventLoop::new();
     'main: loop {
@@ -45,6 +47,10 @@ fn main() {
                 // handle window events
                 glium::glutin::Event::WindowEvent { event, .. } => match event {
                     glium::glutin::WindowEvent::Closed => break 'main,
+                    glium::glutin::WindowEvent::KeyboardInput { 
+                        input,
+                        .. 
+                    } => {format!("hello {:?}", input.virtual_keycode);},
                     _ => (),
                 }
                 _ => (),
@@ -62,6 +68,15 @@ fn main() {
                 .color(conrod::color::BLACK)
                 .font_size(32)
                 .set(ids.text, ui_cell);
+            
+            for edit in widget::TextEdit::new(&editable_text)
+                .align_bottom_of(ui_cell.window)
+                .color(conrod::color::BLACK)
+                .font_size(16)
+                .set(ids.text_box, ui_cell) {
+                    editable_text = edit;
+                    format!("{}", editable_text);
+                };
 
             renderer.draw(&display, &mut target, &image_map).unwrap();
             target.finish().unwrap();
